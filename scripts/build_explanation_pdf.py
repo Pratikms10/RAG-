@@ -55,19 +55,19 @@ def main() -> None:
     sections = [
         (
             "1. Design parameter: chunk size",
-            "I chose <b>180-word chunks with a 40-word overlap</b>. The task's reference files are likely short but factual: 180 words usually holds one procedure or policy together, while 40 words protects an answer that crosses a boundary. The chunker is an inspectable word-window function rather than a hidden framework abstraction; each exact chunk and ID is persisted in <font name='Courier'>data/chunks.json</font>.",
+            "I chose a <b>180-word target with a 40-word overlap</b>, but changed fixed word windows to sentence-aware windows. The target keeps a short factual procedure together; overlap protects a boundary fact. Preserving sentence boundaries matters because support is now verified at sentence level. The strategy and parameters are persisted with every document, and chunks remain inspectable through the API.",
         ),
         (
             "2. Failure observed while building",
-            "During verification, two overlapping <font name='Courier'>pip install</font> processes tried to update the same Pydantic metadata file and raised <font name='Courier'>OSError: [Errno 13] Permission denied</font> for <font name='Courier'>pydantic-2.13.5.dist-info/INSTALLER</font>. The cause was concurrent environment setup, not the API; I let the first install finish and reran the second. In the product path, malformed-PDF parser failures are also caught and returned as a clear 422 response (covered by a test).",
+            "An early gate unioned terms across a retrieved chunk. “Does the safety officer inspect battery cabinets?” incorrectly returned <font name='Courier'>grounded: true</font>: one sentence mentioned the officer and another cabinet inspection, but no sentence established that relationship. Aggregate term coverage masqueraded as support. I fixed it by requiring one sentence to cover at least <b>60%</b> of a one-part question; the trace now exposes the failed span check rather than inventing a connection.",
         ),
         (
             "3. Metric tracked: local query latency",
-            "I ran <font name='Courier'>python scripts/benchmark.py</font> with 20 identical questions after ingesting the sample handbook. On this machine it recorded <b>0.81 ms median</b> and <b>2.40 ms p95</b> local query latency (excluding server/network overhead). That says the lightweight fallback is quick enough for a demo; it does <b>not</b> prove retrieval accuracy. Returned cosine scores and excerpts make each retrieval decision inspectable.",
+            "I added a fixed, manually-authored <b>15-case</b> regression set across TXT, a two-page PDF, direct and multi-fact questions, an explicit negative fact, and three unsupported/adversarial questions. Final local-hash + hybrid dense/BM25 run: <b>Recall@1=1.00</b>, Recall@3=1.00, fact/citation pass=1.00, unsupported abstention=1.00, median latency=<b>7.60 ms</b>, p95=11.09 ms. This is a small regression result, <b>not</b> a production accuracy claim.",
         ),
         (
             "4. Not finished and next step",
-            "The offline fallback is hashed lexical embeddings, not a semantic local model. I did not build a labeled retrieval benchmark, OCR for scanned PDFs, metadata filtering, or multi-user concurrency. Next I would build a 30-50 question gold set, compare OpenAI embeddings against a local sentence-transformer using recall@k and faithfulness checks, tune the evidence threshold from those results, then add OCR only if target inputs require it.",
+            "The offline fallback is still hashed lexical embeddings, not a semantic local model; the compact suite is for regression rather than independently collected at scale. I did not add OCR, tables/layout-aware parsing, metadata filtering, authentication, or multi-user writes. Next I would collect a held-out human-authored corpus, compare OpenAI embeddings with a local sentence-transformer using Recall@k and citation faithfulness, then tune the 60% evidence threshold only on a separate development split.",
         ),
     ]
 
@@ -78,7 +78,7 @@ def main() -> None:
     for section_title, section_body in sections:
         story.append(KeepTogether([para(section_title, heading), para(section_body, body)]))
     footer = Table(
-        [[para("Honest scope: runnable offline by default; OpenAI calls are optional and guarded with fallback/error handling.", callout)]],
+        [[para("Honest scope: runnable offline by default; hybrid ranking and sentence-level evidence are inspectable; OpenAI calls remain optional and guarded.", callout)]],
         colWidths=[176 * mm],
     )
     footer.setStyle(TableStyle([

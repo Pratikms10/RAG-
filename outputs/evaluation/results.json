@@ -1,0 +1,322 @@
+{
+  "metrics": {
+    "suite": "small manually-authored regression set; not a production benchmark",
+    "backend": "local-hash-v1 + hybrid dense/BM25 retrieval",
+    "chunking": "sentence-window-v1, 180 words target, 40 words overlap",
+    "cases": 15,
+    "answerable_cases": 12,
+    "unsupported_cases": 3,
+    "retrieval_recall_at_1": 1.0,
+    "retrieval_recall_at_3": 1.0,
+    "mrr_at_3": 1.0,
+    "answerable_grounded_rate": 1.0,
+    "answer_fact_pass_rate": 1.0,
+    "citation_pass_rate": 1.0,
+    "unsupported_abstention_rate": 1.0,
+    "false_grounded_rate_on_unsupported": 0.0,
+    "latency_median_ms": 7.604,
+    "latency_p95_ms": 11.091
+  },
+  "cases": [
+    {
+      "id": "aurora_schedule",
+      "category": "direct_fact",
+      "expected": "answer",
+      "grounded": true,
+      "first_gold_rank": 1,
+      "fact_pass": true,
+      "citation_pass": true,
+      "latency_ms": 20.523,
+      "failure_type": "pass",
+      "answer": "Based on the uploaded documents: Aurora Station Field Handbook The Aurora Station safety drill begins at 09:30 every Tuesday in the east assembly bay. [105d4709e3f5c297-p000-c001]",
+      "gate_reasons": [
+        "Score and term-coverage checks passed; answer generation may use this evidence."
+      ],
+      "retrieved_chunk_ids": [
+        "105d4709e3f5c297-p000-c001",
+        "c17cec2b0bfd8030-p000-c002",
+        "c17cec2b0bfd8030-p000-c001"
+      ]
+    },
+    {
+      "id": "aurora_battery",
+      "category": "multi_fact",
+      "expected": "answer",
+      "grounded": true,
+      "first_gold_rank": 1,
+      "fact_pass": true,
+      "citation_pass": true,
+      "latency_ms": 10.875,
+      "failure_type": "pass",
+      "answer": "Based on the uploaded documents: The battery laboratory uses cobalt-free sodium-ion cells for short duration backup power. [105d4709e3f5c297-p000-c001] Each cabinet must be inspected every 30 days by a trained technician. [105d4709e3f5c297-p000-c001]",
+      "gate_reasons": [
+        "Score and term-coverage checks passed; answer generation may use this evidence."
+      ],
+      "retrieved_chunk_ids": [
+        "105d4709e3f5c297-p000-c001",
+        "c17cec2b0bfd8030-p000-c002",
+        "c17cec2b0bfd8030-p000-c001"
+      ]
+    },
+    {
+      "id": "aurora_visitors",
+      "category": "direct_fact",
+      "expected": "answer",
+      "grounded": true,
+      "first_gold_rank": 1,
+      "fact_pass": true,
+      "citation_pass": true,
+      "latency_ms": 7.004,
+      "failure_type": "pass",
+      "answer": "Based on the uploaded documents: Visitors must wear a yellow badge and remain with an escort in the instrument hall. [105d4709e3f5c297-p000-c001]",
+      "gate_reasons": [
+        "Score and term-coverage checks passed; answer generation may use this evidence."
+      ],
+      "retrieved_chunk_ids": [
+        "105d4709e3f5c297-p000-c001",
+        "c17cec2b0bfd8030-p000-c002",
+        "c17cec2b0bfd8030-p000-c001"
+      ]
+    },
+    {
+      "id": "harbor_schedule",
+      "category": "direct_fact",
+      "expected": "answer",
+      "grounded": true,
+      "first_gold_rank": 1,
+      "fact_pass": true,
+      "citation_pass": true,
+      "latency_ms": 5.068,
+      "failure_type": "pass",
+      "answer": "Based on the uploaded documents: Harborline Transit - Depot Calibration Memo On 22 October, Depot 7 will calibrate its ticket validators between 13:00 and 15:00. [72e17e047c763d5b-p000-c001]",
+      "gate_reasons": [
+        "Score and term-coverage checks passed; answer generation may use this evidence."
+      ],
+      "retrieved_chunk_ids": [
+        "72e17e047c763d5b-p000-c001",
+        "4246c67bb8d69bad-p002-c002",
+        "c17cec2b0bfd8030-p000-c001"
+      ]
+    },
+    {
+      "id": "harbor_remedy",
+      "category": "direct_fact",
+      "expected": "answer",
+      "grounded": true,
+      "first_gold_rank": 1,
+      "fact_pass": true,
+      "citation_pass": true,
+      "latency_ms": 9.501,
+      "failure_type": "pass",
+      "answer": "Based on the uploaded documents: During that window, operators should issue paper transfer slips if a validator rejects a valid pass. [72e17e047c763d5b-p000-c001]",
+      "gate_reasons": [
+        "Score and term-coverage checks passed; answer generation may use this evidence."
+      ],
+      "retrieved_chunk_ids": [
+        "72e17e047c763d5b-p000-c001",
+        "c17cec2b0bfd8030-p000-c001",
+        "c17cec2b0bfd8030-p000-c002"
+      ]
+    },
+    {
+      "id": "harbor_lead",
+      "category": "multi_fact",
+      "expected": "answer",
+      "grounded": true,
+      "first_gold_rank": 1,
+      "fact_pass": true,
+      "citation_pass": true,
+      "latency_ms": 5.986,
+      "failure_type": "pass",
+      "answer": "Based on the uploaded documents: The calibration lead is Maya Deshmukh. [72e17e047c763d5b-p000-c001] The work is limited to platforms 2 and 3; platform 1 remains in normal service. [72e17e047c763d5b-p000-c001]",
+      "gate_reasons": [
+        "Score and term-coverage checks passed; answer generation may use this evidence."
+      ],
+      "retrieved_chunk_ids": [
+        "72e17e047c763d5b-p000-c001",
+        "4246c67bb8d69bad-p002-c002",
+        "c17cec2b0bfd8030-p000-c001"
+      ]
+    },
+    {
+      "id": "orbital_hold",
+      "category": "direct_fact",
+      "expected": "answer",
+      "grounded": true,
+      "first_gold_rank": 1,
+      "fact_pass": true,
+      "citation_pass": true,
+      "latency_ms": 8.376,
+      "failure_type": "pass",
+      "answer": "Based on the uploaded documents: A hold can only be cleared by the flight director after the responsible subsystem lead documents the corrective action. [c17cec2b0bfd8030-p000-c001] Orbital Operations Manual - Revision 4 Section A: Pre-launch readiness Before a launch, the flight director confirms the weather packet, the crew roster, and the propulsion checklist. [c17cec2b0bfd8030-p000-c001]",
+      "gate_reasons": [
+        "Score and term-coverage checks passed; answer generation may use this evidence."
+      ],
+      "retrieved_chunk_ids": [
+        "c17cec2b0bfd8030-p000-c001",
+        "c17cec2b0bfd8030-p000-c002",
+        "105d4709e3f5c297-p000-c001"
+      ]
+    },
+    {
+      "id": "orbital_comms",
+      "category": "direct_fact",
+      "expected": "answer",
+      "grounded": true,
+      "first_gold_rank": 1,
+      "fact_pass": true,
+      "citation_pass": true,
+      "latency_ms": 11.091,
+      "failure_type": "pass",
+      "answer": "Based on the uploaded documents: If the primary ground link is unavailable, the crew switches to the low-bandwidth relay channel and sends a concise status packet every 15 minutes. [c17cec2b0bfd8030-p000-c001]",
+      "gate_reasons": [
+        "Score and term-coverage checks passed; answer generation may use this evidence."
+      ],
+      "retrieved_chunk_ids": [
+        "c17cec2b0bfd8030-p000-c001",
+        "c17cec2b0bfd8030-p000-c002",
+        "72e17e047c763d5b-p000-c001"
+      ]
+    },
+    {
+      "id": "orbital_cabinet",
+      "category": "direct_fact",
+      "expected": "answer",
+      "grounded": true,
+      "first_gold_rank": 1,
+      "fact_pass": true,
+      "citation_pass": true,
+      "latency_ms": 5.996,
+      "failure_type": "pass",
+      "answer": "Based on the uploaded documents: Section C: Power cabinets The lithium-titanate backup cabinets are inspected every 21 days by an electrical technician. [c17cec2b0bfd8030-p000-c002]",
+      "gate_reasons": [
+        "Score and term-coverage checks passed; answer generation may use this evidence."
+      ],
+      "retrieved_chunk_ids": [
+        "c17cec2b0bfd8030-p000-c002",
+        "105d4709e3f5c297-p000-c001",
+        "c17cec2b0bfd8030-p000-c001"
+      ]
+    },
+    {
+      "id": "orbital_boundary",
+      "category": "boundary_fact",
+      "expected": "answer",
+      "grounded": true,
+      "first_gold_rank": 1,
+      "fact_pass": true,
+      "citation_pass": true,
+      "latency_ms": 8.329,
+      "failure_type": "pass",
+      "answer": "Based on the uploaded documents: When the particulate reading exceeds 35 micrograms per cubic meter, the payload doors remain closed until the contamination lead approves a new baseline. [c17cec2b0bfd8030-p000-c002]",
+      "gate_reasons": [
+        "Score and term-coverage checks passed; answer generation may use this evidence."
+      ],
+      "retrieved_chunk_ids": [
+        "c17cec2b0bfd8030-p000-c002",
+        "105d4709e3f5c297-p000-c001",
+        "72e17e047c763d5b-p000-c001"
+      ]
+    },
+    {
+      "id": "pdf_page_provenance",
+      "category": "pdf_page_two",
+      "expected": "answer",
+      "grounded": true,
+      "first_gold_rank": 1,
+      "fact_pass": true,
+      "citation_pass": true,
+      "latency_ms": 3.346,
+      "failure_type": "pass",
+      "answer": "Based on the uploaded documents: Orbital Operations Appendix OPERATIONAL APPENDIX | PAGE 2 Page 2 - Optical calibration Optical calibration is led by the navigation engineer at 14:20 each Thursday. [4246c67bb8d69bad-p002-c002] The calibration lead is Maya Deshmukh. [72e17e047c763d5b-p000-c001]",
+      "gate_reasons": [
+        "Score and term-coverage checks passed; answer generation may use this evidence."
+      ],
+      "retrieved_chunk_ids": [
+        "4246c67bb8d69bad-p002-c002",
+        "4246c67bb8d69bad-p001-c001",
+        "72e17e047c763d5b-p000-c001"
+      ]
+    },
+    {
+      "id": "negative_leave",
+      "category": "unsupported",
+      "expected": "abstain",
+      "grounded": false,
+      "first_gold_rank": null,
+      "fact_pass": null,
+      "citation_pass": null,
+      "latency_ms": 4.551,
+      "failure_type": "correct_abstention",
+      "answer": "I could not find enough evidence in the uploaded documents to answer that question.",
+      "gate_reasons": [
+        "No single evidence sentence covers at least 60% of this one-part question; the system will not combine separate facts into a new claim."
+      ],
+      "retrieved_chunk_ids": [
+        "72e17e047c763d5b-p000-c001",
+        "105d4709e3f5c297-p000-c001",
+        "4246c67bb8d69bad-p001-c001"
+      ]
+    },
+    {
+      "id": "negative_city",
+      "category": "unsupported",
+      "expected": "abstain",
+      "grounded": false,
+      "first_gold_rank": null,
+      "fact_pass": null,
+      "citation_pass": null,
+      "latency_ms": 6.812,
+      "failure_type": "correct_abstention",
+      "answer": "I could not find enough evidence in the uploaded documents to answer that question.",
+      "gate_reasons": [
+        "No single evidence sentence covers at least 60% of this one-part question; the system will not combine separate facts into a new claim."
+      ],
+      "retrieved_chunk_ids": [
+        "105d4709e3f5c297-p000-c001",
+        "72e17e047c763d5b-p000-c001",
+        "c17cec2b0bfd8030-p000-c001"
+      ]
+    },
+    {
+      "id": "negative_stitched",
+      "category": "cross_sentence_stitch",
+      "expected": "abstain",
+      "grounded": false,
+      "first_gold_rank": null,
+      "fact_pass": null,
+      "citation_pass": null,
+      "latency_ms": 7.604,
+      "failure_type": "correct_abstention",
+      "answer": "I could not find enough evidence in the uploaded documents to answer that question.",
+      "gate_reasons": [
+        "No single evidence sentence covers at least 60% of this one-part question; the system will not combine separate facts into a new claim."
+      ],
+      "retrieved_chunk_ids": [
+        "105d4709e3f5c297-p000-c001",
+        "c17cec2b0bfd8030-p000-c001",
+        "c17cec2b0bfd8030-p000-c002"
+      ]
+    },
+    {
+      "id": "orbital_role",
+      "category": "negative_fact_in_source",
+      "expected": "answer",
+      "grounded": true,
+      "first_gold_rank": 1,
+      "fact_pass": true,
+      "citation_pass": true,
+      "latency_ms": 7.891,
+      "failure_type": "pass",
+      "answer": "Based on the uploaded documents: The flight director does not perform cabinet inspections; the director only confirms that the inspection record is complete before launch. [c17cec2b0bfd8030-p000-c001]",
+      "gate_reasons": [
+        "Score and term-coverage checks passed; answer generation may use this evidence."
+      ],
+      "retrieved_chunk_ids": [
+        "c17cec2b0bfd8030-p000-c001",
+        "c17cec2b0bfd8030-p000-c002",
+        "105d4709e3f5c297-p000-c001"
+      ]
+    }
+  ]
+}
