@@ -1,0 +1,118 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="theme-color" content="#0a1020">
+    <title>Evidence Lab | Grounded Local RAG</title>
+    <link rel="stylesheet" href="/static/app.css">
+  </head>
+  <body>
+    <div class="ambient ambient-one"></div>
+    <div class="ambient ambient-two"></div>
+    <header class="topbar">
+      <a class="brand" href="/" aria-label="Evidence Lab home">
+        <span class="brand-mark">E</span>
+        <span>
+          <strong>Evidence Lab</strong>
+          <small>Grounded Local RAG</small>
+        </span>
+      </a>
+      <div class="topbar-actions">
+        <span class="connection"><i></i><span id="connectionLabel">Checking local index</span></span>
+        <a class="link-button" href="/docs" target="_blank" rel="noreferrer">API docs ↗</a>
+      </div>
+    </header>
+
+    <main>
+      <section class="hero" aria-labelledby="heroTitle">
+        <div>
+          <p class="eyebrow">EVIDENCE-FIRST QUESTION ANSWERING</p>
+          <h1 id="heroTitle">Answers that can<br><em>show their work.</em></h1>
+          <p class="hero-copy">Upload source material, ask a question, and inspect the exact sentences, ranking signals, and grounding decision behind the result.</p>
+        </div>
+        <div class="hero-proof" aria-label="Evidence workflow">
+          <div><span>01</span><b>Parse</b><small>PDF / TXT</small></div>
+          <div><span>02</span><b>Retrieve</b><small>Hybrid rank</small></div>
+          <div><span>03</span><b>Verify</b><small>Sentence support</small></div>
+        </div>
+      </section>
+
+      <section class="workbench" aria-label="Evidence Lab workbench">
+        <aside class="control-rail">
+          <section class="panel upload-panel">
+            <div class="section-heading">
+              <div>
+                <p class="eyebrow">SOURCE MATERIAL</p>
+                <h2>Build the local index</h2>
+              </div>
+              <span class="counter" id="documentCount">0 docs</span>
+            </div>
+            <label class="dropzone" id="dropzone" for="fileInput">
+              <input id="fileInput" type="file" accept=".pdf,.txt,application/pdf,text/plain">
+              <span class="drop-icon">↥</span>
+              <strong>Drop a PDF or TXT here</strong>
+              <small>or choose a file · 12 MB maximum</small>
+            </label>
+            <details class="chunk-config">
+              <summary>Chunking configuration <span>180 words · 40 overlap</span></summary>
+              <div class="config-grid">
+                <label>Chunk size<input id="chunkSize" type="number" min="80" max="600" value="180"></label>
+                <label>Overlap<input id="chunkOverlap" type="number" min="0" max="250" value="40"></label>
+              </div>
+            </details>
+            <div class="document-list" id="documentList" aria-live="polite"></div>
+            <button class="ghost danger" id="clearButton" type="button" disabled>Reset local index</button>
+          </section>
+
+          <section class="panel method-panel">
+            <p class="eyebrow">THE METHOD</p>
+            <h2>Two signals. One visible verdict.</h2>
+            <div class="method-row"><span class="method-dot dense"></span><div><b>Dense similarity</b><small>Embedding affinity</small></div><strong>70%</strong></div>
+            <div class="method-row"><span class="method-dot lexical"></span><div><b>Lexical evidence</b><small>BM25-style terms</small></div><strong>30%</strong></div>
+            <p class="method-note">The answer is blocked unless score, term coverage, and sentence-level support agree.</p>
+          </section>
+        </aside>
+
+        <section class="answer-stage">
+          <section class="panel question-panel">
+            <div class="section-heading">
+              <div>
+                <p class="eyebrow">ASK THE INDEX</p>
+                <h2>What do you want to verify?</h2>
+              </div>
+              <label class="topk-label">Top <select id="topK" aria-label="Number of chunks to retrieve"><option>3</option><option selected>4</option><option>5</option></select></label>
+            </div>
+            <form id="questionForm">
+              <textarea id="questionInput" rows="2" minlength="3" maxlength="2000" placeholder="Ask a precise question about the uploaded documents…" required></textarea>
+              <div class="question-actions">
+                <div class="prompt-chips" aria-label="Sample prompts">
+                  <button type="button" data-prompt="When does the safety drill begin?">Schedule</button>
+                  <button type="button" data-prompt="What is the annual leave policy?">Challenge the evidence</button>
+                </div>
+                <button class="primary" id="askButton" type="submit"><span>Trace answer</span><b>→</b></button>
+              </div>
+            </form>
+          </section>
+
+          <section class="result-shell" id="resultShell" aria-live="polite" data-state="empty">
+            <div class="empty-state" id="emptyState">
+              <span class="empty-orbit"></span>
+              <p class="eyebrow">READY FOR EVIDENCE</p>
+              <h2>Start with a source, then a question.</h2>
+              <p>Every result will include its retrieval trace and the sentence-level support used to decide whether an answer is safe to give.</p>
+            </div>
+          </section>
+        </section>
+      </section>
+    </main>
+
+    <template id="documentTemplate">
+      <article class="document-card">
+        <span class="file-tag"></span>
+        <div><strong class="document-name"></strong><small class="document-meta"></small></div>
+      </article>
+    </template>
+    <script src="/static/app.js" defer></script>
+  </body>
+</html>

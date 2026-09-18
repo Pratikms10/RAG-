@@ -1,0 +1,16 @@
+Orbital Operations Manual - Revision 4
+
+Section A: Pre-launch readiness
+Before a launch, the flight director confirms the weather packet, the crew roster, and the propulsion checklist. The yellow status board is reserved for observation-only issues that do not block a launch. The red status board is reserved for a condition that requires an immediate hold. A hold can only be cleared by the flight director after the responsible subsystem lead documents the corrective action.
+
+Section B: Communications
+During normal operations, radio check-ins occur every 45 minutes. If the primary ground link is unavailable, the crew switches to the low-bandwidth relay channel and sends a concise status packet every 15 minutes. The relay channel is not approved for transferring camera footage or large engineering files.
+
+Section C: Power cabinets
+The lithium-titanate backup cabinets are inspected every 21 days by an electrical technician. The inspection includes a temperature reading, a seal check, and a review of the cabinet event log. The flight director does not perform cabinet inspections; the director only confirms that the inspection record is complete before launch.
+
+Section D: Boundary procedure
+The environmental sensor baseline is recorded before the payload doors are opened. The baseline record must include humidity, pressure, and particulate readings. When the particulate reading exceeds 35 micrograms per cubic meter, the payload doors remain closed until the contamination lead approves a new baseline. The contamination lead enters the approval in the operations log.
+
+Section E: Visitors
+Visitors may enter the observation gallery only with a blue visitor badge and a host escort. Visitors may not enter the flight control room, even with an escort. The cafeteria closes at 18:00 on Sundays.
