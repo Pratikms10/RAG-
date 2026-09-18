@@ -14,6 +14,8 @@ from app.errors import DocumentParseError, EmptyDocumentError, UnsupportedDocume
 
 SUPPORTED_SUFFIXES = {".pdf", ".txt"}
 _WHITESPACE = re.compile(r"\s+")
+_SENTENCE_BREAK = re.compile(r"(?<=[.!?])\s+")
+CHUNKING_STRATEGY = "sentence-window-v1"
 
 
 def parse_document(filename: str, payload: bytes) -> tuple[list[tuple[int | None, str]], str]:
@@ -85,17 +87,46 @@ def build_document_and_chunks(
             sha256=digest,
             page_count=len(pages),
             chunk_count=len(chunks),
+            chunking_strategy=CHUNKING_STRATEGY,
+            chunk_size_words=chunk_size_words,
+            chunk_overlap_words=chunk_overlap_words,
         ),
         chunks,
     )
 
 
 def chunk_text_words(text: str, chunk_size_words: int, overlap_words: int) -> list[str]:
-    """Chunk in fixed word windows; overlap protects facts spanning a boundary.
+    """Chunk near a target size without cutting ordinary sentences.
 
-    This intentionally does not hide chunking behind a framework. The exact window
-    is easy to inspect in `chunks.json` and easy to explain in a code review.
+    The 40-word overlap is retained at natural sentence boundaries whenever
+    possible. A punctuation-free or exceptionally long sentence falls back to
+    deterministic word windows so that ingestion cannot silently drop text.
     """
+    sentences = [sentence.strip() for sentence in _SENTENCE_BREAK.split(text) if sentence.strip()]
+    if not sentences or any(len(sentence.split()) > chunk_size_words for sentence in sentences):
+        return _fixed_word_windows(text, chunk_size_words, overlap_words)
+    chunks: list[str] = []
+    current: list[str] = []
+    current_words = 0
+    for sentence in sentences:
+        sentence_words = len(sentence.split())
+        if current and current_words + sentence_words > chunk_size_words:
+            chunks.append(" ".join(current))
+            current = _overlap_sentences(current, overlap_words)
+            current_words = sum(len(item.split()) for item in current)
+            if current and current_words + sentence_words > chunk_size_words:
+                # Preserve the target size when one long sentence would make
+                # sentence-level overlap counterproductive.
+                current = []
+                current_words = 0
+        current.append(sentence)
+        current_words += sentence_words
+    if current:
+        chunks.append(" ".join(current))
+    return chunks
+
+
+def _fixed_word_windows(text: str, chunk_size_words: int, overlap_words: int) -> list[str]:
     words = text.split()
     if not words:
         return []
@@ -109,6 +140,19 @@ def chunk_text_words(text: str, chunk_size_words: int, overlap_words: int) -> li
         if start + chunk_size_words >= len(words):
             break
     return chunks
+
+
+def _overlap_sentences(sentences: list[str], overlap_words: int) -> list[str]:
+    if overlap_words == 0:
+        return []
+    overlap: list[str] = []
+    words = 0
+    for sentence in reversed(sentences):
+        overlap.insert(0, sentence)
+        words += len(sentence.split())
+        if words >= overlap_words:
+            break
+    return overlap
 
 
 def _decode_text(payload: bytes) -> str:

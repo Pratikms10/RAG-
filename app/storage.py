@@ -6,7 +6,7 @@ import json
 import threading
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Any, Iterable
+from typing import Any
 
 import numpy as np
 
@@ -61,9 +61,11 @@ class LocalVectorStore:
             merged_chunks = [*current.chunks, *chunks]
             merged_documents = [*current.documents, document]
             metadata = {
+                "index_schema_version": 2,
                 "embedding_backend": backend_name,
                 "dimensions": int(merged_vectors.shape[1]),
                 "vector_count": int(merged_vectors.shape[0]),
+                "retrieval_strategy": "hybrid-dense-bm25-v1",
             }
             self._write_json(self._chunks_path, [item.to_dict() for item in merged_chunks])
             self._write_json(self._documents_path, [item.to_dict() for item in merged_documents])

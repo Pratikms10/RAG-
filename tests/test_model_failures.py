@@ -29,7 +29,9 @@ def test_answer_model_failure_uses_grounded_extractive_fallback(monkeypatch, tmp
     service.ingest("facts.txt", b"The green beacon is inspected every Monday.")
     monkeypatch.setattr(
         "app.answering.generate_openai",
-        lambda question, hits, settings: Generation(None, "openai", "simulated answer outage"),
+        lambda question, hits, settings, evidence_spans=(): Generation(
+            None, "openai", "simulated answer outage"
+        ),
     )
 
     answer = service.answer("When is the green beacon inspected?", top_k=3)

@@ -19,6 +19,8 @@ class Settings:
     chunk_size_words: int = 180
     chunk_overlap_words: int = 40
     min_relevance_score: float = 0.18
+    dense_weight: float = 0.70
+    lexical_weight: float = 0.30
     max_upload_bytes: int = 12 * 1024 * 1024
 
     @classmethod
@@ -42,3 +44,7 @@ class Settings:
             raise ValueError("chunk_size_words must be between 80 and 600")
         if not 0 <= self.chunk_overlap_words < self.chunk_size_words:
             raise ValueError("chunk_overlap_words must be non-negative and smaller than chunk_size_words")
+        if self.dense_weight < 0 or self.lexical_weight < 0:
+            raise ValueError("retrieval weights must be non-negative")
+        if abs((self.dense_weight + self.lexical_weight) - 1.0) > 0.001:
+            raise ValueError("dense_weight and lexical_weight must add up to 1.0")

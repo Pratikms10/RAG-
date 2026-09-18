@@ -4,12 +4,13 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 
-from app.answering import evidence_is_sufficient, generate_answer
+from app.answering import assess_evidence, generate_answer
 from app.config import Settings
-from app.domain import AnswerResult, Document
+from app.domain import AnswerResult, Chunk, Document, RetrievalTrace
 from app.embeddings import EmbeddingOutcome, LocalHashEmbeddingProvider, provider_for
 from app.errors import EmbeddingProviderError
 from app.ingestion import build_document_and_chunks
+from app.retrieval import rank_chunks
 from app.storage import LocalVectorStore
 
 
@@ -41,8 +42,8 @@ class RAGService:
         return IngestResult(document, outcome.backend_name, outcome.warning)
 
     def answer(self, question: str, top_k: int) -> AnswerResult:
-        snapshot = self.store.snapshot()
-        if not snapshot.chunks:
+        retrieval = self.retrieve(question, top_k)
+        if not retrieval.hits:
             return AnswerResult(
                 answer="I do not have any indexed documents yet. Upload a PDF or TXT file first.",
                 grounded=False,
@@ -50,22 +51,28 @@ class RAGService:
                 answer_backend="none",
                 warnings=(),
                 sources=(),
+                retrieval=retrieval,
             )
-        provider = provider_for(self.settings, str(snapshot.metadata["embedding_backend"]))
-        query_vector = provider.embed_query(question)
-        hits = self.store.search(query_vector, top_k)
-        if not evidence_is_sufficient(question, hits, self.settings.min_relevance_score):
+        if not retrieval.assessment.sufficient:
             return AnswerResult(
                 answer="I could not find enough evidence in the uploaded documents to answer that question.",
                 grounded=False,
                 insufficient_evidence=True,
                 answer_backend="none",
                 warnings=(),
-                sources=tuple(hits),
+                sources=retrieval.hits,
+                retrieval=retrieval,
             )
-        generated = generate_answer(question, hits, self.settings)
+        generated = generate_answer(
+            question,
+            retrieval.hits,
+            self.settings,
+            retrieval.assessment.evidence_spans,
+        )
         answer_sources = tuple(
-            hit for hit in hits if not generated.source_chunk_ids or hit.chunk.id in generated.source_chunk_ids
+            hit
+            for hit in retrieval.hits
+            if hit.chunk.id in generated.source_chunk_ids
         )
         if generated.answer is None:
             return AnswerResult(
@@ -75,6 +82,7 @@ class RAGService:
                 answer_backend=generated.backend_name,
                 warnings=tuple(filter(None, [generated.warning])),
                 sources=answer_sources,
+                retrieval=retrieval,
             )
         return AnswerResult(
             answer=generated.answer,
@@ -83,10 +91,44 @@ class RAGService:
             answer_backend=generated.backend_name,
             warnings=tuple(filter(None, [generated.warning])),
             sources=answer_sources,
+            retrieval=retrieval,
         )
+
+    def retrieve(self, question: str, top_k: int) -> RetrievalTrace:
+        """Return the ranking and decision trace without generating an answer."""
+        snapshot = self.store.snapshot()
+        if not snapshot.chunks:
+            return RetrievalTrace((), assess_evidence(question, (), self.settings.min_relevance_score))
+        provider = provider_for(self.settings, str(snapshot.metadata["embedding_backend"]))
+        query_vector = provider.embed_query(question)
+        hits = tuple(
+            rank_chunks(
+                snapshot.chunks,
+                snapshot.vectors,
+                query_vector,
+                question,
+                top_k,
+                self.settings.dense_weight,
+                self.settings.lexical_weight,
+            )
+        )
+        return RetrievalTrace(hits, assess_evidence(question, hits, self.settings.min_relevance_score))
 
     def documents(self) -> tuple[Document, ...]:
         return self.store.snapshot().documents
+
+    def chunks_for_document(self, document_id: str) -> tuple[Chunk, ...]:
+        return tuple(chunk for chunk in self.store.snapshot().chunks if chunk.document_id == document_id)
+
+    def chunk(self, document_id: str, chunk_id: str) -> Chunk | None:
+        return next(
+            (
+                chunk
+                for chunk in self.store.snapshot().chunks
+                if chunk.document_id == document_id and chunk.id == chunk_id
+            ),
+            None,
+        )
 
     def clear(self) -> None:
         self.store.clear()

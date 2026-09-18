@@ -24,7 +24,32 @@ class SourceChunk(BaseModel):
     filename: str
     page_number: int | None
     score: float
+    dense_score: float
+    lexical_score: float
+    matched_terms: list[str]
     excerpt: str
+
+
+class EvidenceSpanResponse(BaseModel):
+    chunk_id: str
+    text: str
+    matched_terms: list[str]
+    coverage: float
+
+
+class RetrievalTraceResponse(BaseModel):
+    query_terms: list[str]
+    matched_terms: list[str]
+    term_coverage: float
+    required_term_matches: int
+    top_score: float | None
+    minimum_score: float
+    requires_single_span: bool
+    best_span_coverage: float
+    evidence_spans: list[EvidenceSpanResponse]
+    sufficient: bool
+    reasons: list[str]
+    candidates: list[SourceChunk]
 
 
 class AnswerResponse(BaseModel):
@@ -34,6 +59,7 @@ class AnswerResponse(BaseModel):
     answer_backend: str
     warnings: list[str]
     source_chunks: list[SourceChunk]
+    retrieval_trace: RetrievalTraceResponse
 
 
 class IngestResponse(BaseModel):
@@ -42,6 +68,9 @@ class IngestResponse(BaseModel):
     format: str
     pages_with_text: int
     chunks_added: int
+    chunking_strategy: str
+    chunk_size_words: int
+    chunk_overlap_words: int
     embedding_backend: str
     warning: str | None = None
 
@@ -52,6 +81,19 @@ class DocumentResponse(BaseModel):
     format: str
     pages_with_text: int
     chunk_count: int
+    chunking_strategy: str
+    chunk_size_words: int
+    chunk_overlap_words: int
+
+
+class ChunkResponse(BaseModel):
+    chunk_id: str
+    document_id: str
+    filename: str
+    page_number: int | None
+    ordinal: int
+    word_count: int
+    text: str
 
 
 class HealthResponse(BaseModel):
